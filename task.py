@@ -10,7 +10,7 @@ import os
 URL = "https://itdashboard.gov/"
 LINK_DIVEIN = "#home-dive-in"
 OUTPUT_PATH = os.path.join(os.getcwd()) + "/output/"
-DEPARTAMENT = "Department of Agriculture"
+DEPARTMENT = "Department of Agriculture"
 DOWNLOAD_PATH = os.path.expanduser("~") + "/Downloads/"
 
 
@@ -43,7 +43,6 @@ class AgenciesProcess:
                 found_agencies.append(agency_split[0])
                 amounts.append(agency_split[2])
             self.agencies_data = {'Agencies': found_agencies, 'Amounts': amounts}
-            print(self.agencies_data)
         except:
             raise Exception("Failed to get the agencies information from: " + URL)
 
@@ -63,7 +62,7 @@ class AgenciesProcess:
     def get_department_info(self):
         try:
             self.lib.find_element(
-                "//div[@id='agency-tiles-widget']//img[@alt='Seal of the " + DEPARTAMENT + "']").click()
+                "//div[@id='agency-tiles-widget']//img[@alt='Seal of the " + DEPARTMENT + "']").click()
             time.sleep(10)
             self.excel.open_workbook(OUTPUT_PATH + "/Agencies.xlsx")
             table_id = self.lib.find_element(
@@ -79,7 +78,6 @@ class AgenciesProcess:
                     r = row.find_elements_by_tag_name('td')
                     uii = r[0]
                     title = r[2].text
-                    print(uii.text)
 
                     try:
                         a_element = uii.find_element_by_tag_name(
@@ -89,7 +87,6 @@ class AgenciesProcess:
                         a_element = ""
 
                     self.uii_links[uii.text] = [a_element, title]
-                    print(self.uii_links)
 
                     for cell in r:
                         t.append(cell.text)
@@ -99,14 +96,14 @@ class AgenciesProcess:
                 time.sleep(7)
             return content
         except:
-            raise Exception("Failed to get " + DEPARTAMENT + " information")
+            raise Exception("Failed to get " + DEPARTMENT + " information")
         finally:
             self.excel.close_workbook()
             time.sleep(5)       
 
     def department_to_sheet(self, content):
         self.excel.open_workbook(OUTPUT_PATH + "/Agencies.xlsx")
-        self.excel.create_worksheet(DEPARTAMENT, content, True)
+        self.excel.create_worksheet(DEPARTMENT, content, True)
         self.excel.save_workbook()
         self.excel.close_workbook()
 
@@ -182,11 +179,21 @@ class AgenciesProcess:
 if __name__ == "__main__":
     agencies_process = AgenciesProcess()
     try:
+        print("1: Getting agencies information.")
         agencies_process.get_agencies()
+        print("1: Done.")
+        print("2: Extracting data to excel file.")
         agencies_process.agencies_to_excel()
+        print("2: Done.")
+        print("3: Getting." + DEPARTMENT + "infomartion.")
         content = agencies_process.get_department_info()
+        print("3: Done.")
+        print("4: Extracting data from department to excel sheet.")
         agencies_process.department_to_sheet(content)
+        print("4: Done.")
+        print("5: Processing PDFs.")
         agencies_process.download_pdfs()
+        print("5: Done.")
     
     finally:
         agencies_process.close_browsers()
