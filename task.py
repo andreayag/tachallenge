@@ -10,7 +10,7 @@ import os
 URL = "https://itdashboard.gov/"
 LINK_DIVEIN = "#home-dive-in"
 OUTPUT_PATH = os.path.join(os.getcwd()) + "/output/"
-DEPARTMENT = "Department of Agriculture"
+DEPARTMENT = "U.S. Agency for International Development"
 DOWNLOAD_PATH = os.path.expanduser("~") + "/Downloads/"
 
 
@@ -59,18 +59,51 @@ class AgenciesProcess:
             self.excel.close_workbook()
             time.sleep(5)
 
+    def find_element(self, element):
+        while True:
+            try:
+                e = self.lib.find_element(element)
+                return e 
+            except:
+                time.sleep(1)  
+
+    def find_elements(self, element):
+        while True:
+            try:
+                e = self.lib.find_element(element)
+                return e 
+            except:
+                time.sleep(1)  
+
+    def find_element_by_tag(self, parent, element):
+        while True:
+            try:
+                e = parent.find_element_by_tag_name(element)
+                return e 
+            except:
+                time.sleep(1)
+
+    def find_elements_by_tag(self, parent, element):
+        while True:
+            try:
+                e = parent.find_elements_by_tag_name(element)
+                return e 
+            except:
+                time.sleep(1)
+
     def get_department_info(self):
         try:
-            self.lib.find_element(
+            self.find_element(
                 "//div[@id='agency-tiles-widget']//img[@alt='Seal of the " + DEPARTMENT + "']").click()
             time.sleep(10)
             self.excel.open_workbook(OUTPUT_PATH + "/Agencies.xlsx")
-            table_id = self.lib.find_element(
+            table_id = self.find_element(
                 "//table[@id='investments-table-object']")
             content = [["UII", "Bureau", "Investment Title",
                         "Total FY2021 Spending ($M)", "Type", "CIO Rating", "# Of Projects"]]
-            time.sleep(5)
+            time.sleep(3)
             while self.lib.find_element('investments-table-object_next').get_attribute("class") != 'paginate_button next disabled':
+                time.sleep(1)
                 rows = table_id.find_element_by_tag_name(
                     "tbody").find_elements_by_tag_name("tr")
                 for row in rows:
@@ -78,22 +111,29 @@ class AgenciesProcess:
                     r = row.find_elements_by_tag_name('td')
                     uii = r[0]
                     title = r[2].text
-                    print(title)
+                    print("before try op")
                     try:
-                        a_element = uii.find_element_by_tag_name(
-                            'a').get_attribute("href")
+                        a_element = uii.find_element_by_tag_name('a').get_attribute("href")
+                        print(a_element)
 
                     except:
                         a_element = ""
-
+                    print("after try op")
                     self.uii_links[uii.text] = [a_element, title]
-
+                    print("before cell op")
                     for cell in r:
+                        print(cell.text)
                         t.append(cell.text)
                     content.append(t)
+
                 time.sleep(2)
+
+             
                 self.lib.find_element('investments-table-object_next').click()
-                time.sleep(7)
+                print(self.lib.find_element('investments-table-object_next').get_attribute("class"))
+                print("press next")
+                time.sleep(10)                 
+
             return content
         except:
             raise Exception("Failed to get " + DEPARTMENT + " information")
@@ -139,10 +179,10 @@ class AgenciesProcess:
                 if link != "":
                     self.lib.go_to(link)
                     time.sleep(5)
-                    pdf_link = self.lib.find_element(
+                    pdf_link = self.find_element(
                         '//*[contains(@id,"business-case-pdf")]//a').get_attribute("href")
                     if pdf_link:
-                        self.lib.find_element(
+                        self.find_element(
                             '//div[@id="business-case-pdf"]').click()
                         time.sleep(4)
 
