@@ -1,10 +1,10 @@
-from logging import raiseExceptions
 from RPA.Browser.Selenium import Selenium
 from RPA.FileSystem import FileSystem
 from RPA.Excel.Files import Files
+from RPA.PDF import PDF
 import time
 import re
-from RPA.PDF import PDF
+
 
 URL = "https://itdashboard.gov/"
 LINK_DIVEIN = "#home-dive-in"
