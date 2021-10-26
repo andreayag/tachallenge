@@ -69,7 +69,7 @@ class AgenciesProcess:
                 "//table[@id='investments-table-object']")
             content = [["UII", "Bureau", "Investment Title",
                         "Total FY2021 Spending ($M)", "Type", "CIO Rating", "# Of Projects"]]
-
+            time.sleep(5)
             while self.lib.find_element('investments-table-object_next').get_attribute("class") != 'paginate_button next disabled':
                 rows = table_id.find_element_by_tag_name(
                     "tbody").find_elements_by_tag_name("tr")
@@ -78,7 +78,7 @@ class AgenciesProcess:
                     r = row.find_elements_by_tag_name('td')
                     uii = r[0]
                     title = r[2].text
-
+                    print(title)
                     try:
                         a_element = uii.find_element_by_tag_name(
                             'a').get_attribute("href")
