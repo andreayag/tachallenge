@@ -4,13 +4,14 @@ from RPA.Excel.Files import Files
 from RPA.PDF import PDF
 import time
 import re
+import os
 
 
 URL = "https://itdashboard.gov/"
 LINK_DIVEIN = "#home-dive-in"
-OUTPUT_PATH = "./Outputs/"
+OUTPUT_PATH = os.path.join(os.getcwd()) + "/output/"
 DEPARTAMENT = "Department of Agriculture"
-DOWNLOAD_PATH = "C:/Users/Fernando/Downloads/"
+DOWNLOAD_PATH = os.path.expanduser("~") + "/Downloads/"
 
 
 class AgenciesProcess:
