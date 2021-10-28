@@ -111,18 +111,14 @@ class AgenciesProcess:
                     r = row.find_elements_by_tag_name('td')
                     uii = r[0]
                     title = r[2].text
-                    print("before try op")
                     try:
                         a_element = uii.find_element_by_tag_name('a').get_attribute("href")
-                        print(a_element)
 
                     except:
                         a_element = ""
-                    print("after try op")
                     self.uii_links[uii.text] = [a_element, title]
-                    print("before cell op")
+
                     for cell in r:
-                        print(cell.text)
                         t.append(cell.text)
                     content.append(t)
 
@@ -130,8 +126,7 @@ class AgenciesProcess:
 
              
                 self.lib.find_element('investments-table-object_next').click()
-                print(self.lib.find_element('investments-table-object_next').get_attribute("class"))
-                print("press next")
+
                 time.sleep(10)                 
 
             return content
