@@ -9,9 +9,9 @@ import os
 
 URL = "https://itdashboard.gov/"
 LINK_DIVEIN = "#home-dive-in"
-OUTPUT_PATH = os.path.join(os.getcwd()) + "/output/"
+OUTPUT_PATH = "output"
 DEPARTMENT = "U.S. Agency for International Development"
-DOWNLOAD_PATH = os.path.expanduser("~") + "/Downloads/"
+
 
 
 class AgenciesProcess:
@@ -23,7 +23,9 @@ class AgenciesProcess:
         self.sysfile = FileSystem()
         self.lib = Selenium()
         self.excel = Files()
+        
         self.sysfile.create_directory(OUTPUT_PATH, False, True)
+        self.lib.set_download_directory(os.path.join(os.getcwd(), f"{OUTPUT_PATH}/"))
 
     def get_agencies(self):
 
@@ -142,13 +144,6 @@ class AgenciesProcess:
         self.excel.save_workbook()
         self.excel.close_workbook()
 
-    def move_pdf_to_output(self, filepath, destpath):
-        try:
-            print(filepath + " " + destpath)
-            self.sysfile.move_file(filepath, destpath, True)
-        except:
-            raise Exception("Failed to move pdf file" + filepath + "to output folder.")
-
     def compare_pdf(self, title, filepath, name):
 
         pdf_text = self.pdf.get_text_from_pdf(filepath, 1)
@@ -167,6 +162,7 @@ class AgenciesProcess:
 
     def download_pdfs(self):
         try:
+            time.sleep(2)
             for uii_name in self.uii_links:
                 link = self.uii_links[uii_name][0]
                 title = self.uii_links[uii_name][1]
@@ -189,8 +185,8 @@ class AgenciesProcess:
                         except:
                             break
                     
-                    filepath = DOWNLOAD_PATH + uii_name + ".pdf"
-                    destpath = OUTPUT_PATH + uii_name + ".pdf"
+                    filepath = OUTPUT_PATH + "/" + uii_name + ".pdf"
+                  
                     
                     while True:
                         try: 
@@ -202,8 +198,8 @@ class AgenciesProcess:
                         except:
                             break
 
-                    self.move_pdf_to_output(filepath, destpath)
-                    self.compare_pdf(title, destpath, uii_name)
+                    
+                    self.compare_pdf(title, filepath, uii_name)
         except:
             raise Exception("Failed to download and proccess PDF file:" + filepath)
 
@@ -220,7 +216,7 @@ if __name__ == "__main__":
         print("2: Extracting data to excel file.")
         agencies_process.agencies_to_excel()
         print("2: Done.")
-        print("3: Getting." + DEPARTMENT + "infomartion.")
+        print("3: Getting." + DEPARTMENT + " infomartion.")
         content = agencies_process.get_department_info()
         print("3: Done.")
         print("4: Extracting data from department to excel sheet.")
