@@ -114,7 +114,7 @@ class AgenciesProcess:
 
     def department_to_sheet(self, content):
         self.excel.open_workbook(OUTPUT_PATH + "/Agencies.xlsx")
-        self.excel.create_worksheet(DEPARTMENT, content, True)
+        self.excel.create_worksheet("Individual Investment", content, True)
         self.excel.save_workbook()
         self.excel.close_workbook()
 
